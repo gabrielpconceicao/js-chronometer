@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+	<head>
+		<title>Simple js chronometer with JQuery</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="author" content="Gabriel Conceição - http://www.gabrielconceicao.com">
+
+		<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+		<style>
+			.container{
+				margin-top: 100px;
+			}
+			.counter{
+				font-size: 90px;
+			}
+			.fraction{
+				font-size: 50px;
+				vertical-align: middle;
+				color: #cccccc;
+			}
+			.controls{
+				display: inline;
+			}
+			 
+		</style>
+
+		<script type="text/javascript">
+
+			var started = false,
+				timer;
+
+			function printFormat( val ){
+				if( parseInt( val ) >= 10 || val.length > 1 )
+					return val;
+				
+				return '0' + val;
+			}
+
+			function incrementMinutes(){
+				if( parseInt( $( '.segundos' ).html() ) >= 60 )
+					return true;
+			}
+
+			function incrementHours(){
+				if( parseInt( $( '.minutos' ).html() ) >= 60 )
+					return true;
+			}
+
+			function increment( val ){
+				if( !val ) val = 0;
+
+				val = parseInt( val );
+
+				return val + 1;
+			}
+
+			function time(){
+				timer = setInterval( function(){
+					$( '.segundos' ).html( printFormat( increment( $( '.segundos' ).html() ) ) );
+
+					if( incrementMinutes() ){
+						$( '.minutos' ).html( printFormat( increment( $( '.minutos' ).html() ) ) );
+						$( '.segundos' ).html( '00' );
+					}
+
+					if( incrementHours() ){
+						$( '.horas' ).html( printFormat( increment( $( '.horas' ).html() ) ) );
+						$( '.minutos' ).html( '00' );
+						$( '.segundos' ).html( '00' );
+					}
+					
+					
+				}, 1000 );
+			}
+
+			$( document ).ready( function(){
+
+				$( '.start' ).on('click', function( e ){
+					if( started ){
+						e.preventDefault();
+						e.stopPropagation(); 
+						return false;
+					}
+					
+					started = true;
+
+					time();
+				});
+				$( '.stop' ).on('click', function(){
+					clearInterval( timer );
+					started = false;
+
+				});
+				$( '.reset' ).on('click', function(){
+					$( '.horas' ).html( '00' );
+					$( '.minutos' ).html( '00' );
+					$( '.segundos' ).html( '00' );
+				});
+
+				$( '.update-time' ).on('click', function(){
+					if( $( '.horas-control' ).val() === '' ) $( '.horas-control' ).val( '0' );
+					if( $( '.minutos-control' ).val() === '' ) $( '.minutos-control' ).val( '0' );
+					if( $( '.segundos-control' ).val() === '' ) $( '.segundos-control' ).val( '0' );
+
+					$( '.horas' ).html( printFormat( $( '.horas-control' ).val() ) );
+					$( '.minutos' ).html( printFormat( $( '.minutos-control' ).val() ) );
+					$( '.segundos' ).html( printFormat( $( '.segundos-control' ).val() ) );
+				});
+
+			});
+
+		</script>
+	</head>
+
+	<body>
+		<div class="container" style="margin-top: 100px;">
+			<div class="row">
+				<div class="col-md-2"></div>
+				<div class="col-md-8">
+					<div class="counter">
+						<span class="horas label label-info">00</span><span class="fraction">h</span>
+						<span class="minutos label label-info">00</span><span class="fraction">m</span>
+						<span class="segundos label label-info">00</span><span class="fraction">s</span>
+					</div>
+				</div>
+				<div class="col-md-2"></div>
+			</div>
+
+			<div class="row">
+				<div class="col-md-4"></div>
+				<div class="col-md-4">
+				
+				</div>
+				<div class="col-md-3" style="margin-top: 100px;">
+					<div class="controls">
+						<button class="btn btn-success start">Start</button>
+						<button class="btn btn-danger stop">Stop</button>
+						<button class="btn btn-primary reset">Reset</button>
+						<br><br>
+						<input type="text" class="form-control horas-control" value="" placeholder="h" />
+						<input type="text" class="form-control minutos-control" value="" placeholder="m" />
+						<input type="text" class="form-control segundos-control" value="" placeholder="s" />
+						<button class="btn btn-primary update-time">Update</button><br><br>
+					</div>
+				</div>
+				<div class="col-md-1">
+				</div>
+			</div>
+		</div>
+
+	</body>
+</html>
